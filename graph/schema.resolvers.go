@@ -12,38 +12,72 @@ import (
 
 // CreateTodo is the resolver for the createTodo field.
 func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
+	query := `INSERT INTO todos (text, done, user_id) VALUES ($1, $2, $3) RETURNING id`
+	var id int
+	err := internal.DB.QueryRow(ctx, query, input.Text, false, input.UserID).Scan(&id) // ← userId が UUID になっている
+	if err != nil {
+		return nil, err
+	}
+
 	return &model.Todo{
-		ID:   "TODO-3",
+		ID:   int32(id),
 		Text: input.Text,
+		Done: false,
 		User: &model.User{
-			ID:   input.UserID,
-			Name: "name",
+			ID: input.UserID,
 		},
+	}, nil
+}
+
+// CreateUser is the resolver for the createUser field.
+func (r *mutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error) {
+	query := `INSERT INTO users (name) VALUES ($1) RETURNING id`
+	var id int
+	err := internal.DB.QueryRow(ctx, query, input.Name).Scan(&id)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.User{
+		ID:   int32(id),
+		Name: input.Name,
 	}, nil
 }
 
 // Todos is the resolver for the todos field.
 func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	return []*model.Todo{
-		{
-			ID:   "TODO-1",
-			Text: "My Todo 1",
-			User: &model.User{
-				ID:   "User-1",
-				Name: "hsaki",
-			},
-			Done: true,
-		},
-		{
-			ID:   "TODO-2",
-			Text: "My Todo 2",
-			User: &model.User{
-				ID:   "User-1",
-				Name: "hsaki",
-			},
-			Done: false,
-		},
-	}, nil
+	query := `SELECT
+				todos.id,
+				todos.text,
+				todos.done,
+				todos.user_id,
+				users.name
+			FROM todos
+			INNER JOIN users ON users.id = todos.user_id`
+	rows, err := internal.DB.Query(ctx, query)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var todos []*model.Todo
+	for rows.Next() {
+		var todo model.Todo
+		var userID int32
+		var userName string
+		err := rows.Scan(&todo.ID, &todo.Text, &todo.Done, &userID, &userName)
+		if err != nil {
+			return nil, err
+		}
+
+		todo.User = &model.User{
+			ID: userID,
+			Name: userName,
+		}
+		todos = append(todos, &todo)
+	}
+
+	return todos, nil
 }
 
 // Mutation returns internal.MutationResolver implementation.

@@ -24,6 +24,7 @@ func main() {
 		port = defaultPort
 	}
 
+	internal.ConnectDB()
 	srv := handler.NewDefaultServer(internal.NewExecutableSchema(internal.Config{Resolvers: &graph.Resolver{}}))
 
 	srv.AddTransport(transport.Options{})

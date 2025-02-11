@@ -2,25 +2,29 @@
 
 package model
 
+type CreateUserInput struct {
+	Name string `json:"name"`
+}
+
 type Mutation struct {
 }
 
 type NewTodo struct {
 	Text   string `json:"text"`
-	UserID string `json:"userId"`
+	UserID int32  `json:"userId"`
 }
 
 type Query struct {
 }
 
 type Todo struct {
-	ID   string `json:"id"`
+	ID   int32  `json:"id"`
 	Text string `json:"text"`
 	Done bool   `json:"done"`
 	User *User  `json:"user"`
 }
 
 type User struct {
-	ID   string `json:"id"`
+	ID   int32  `json:"id"`
 	Name string `json:"name"`
 }
