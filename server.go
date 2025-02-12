@@ -5,8 +5,9 @@ import (
 	"net/http"
 	"os"
 
-	"grapql-to-do/graph"
+	"grapql-to-do/graph/resolver/container"
 	"grapql-to-do/internal"
+	"grapql-to-do/graph/schema"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -25,7 +26,9 @@ func main() {
 	}
 
 	internal.ConnectDB()
-	srv := handler.NewDefaultServer(internal.NewExecutableSchema(internal.Config{Resolvers: &graph.Resolver{}}))
+	resolvers := container.NewResolver()
+	// srv := handler.NewDefaultServer(internal.NewExecutableSchema(internal.Config{Resolvers: &graph.Resolver{}}))
+	srv := handler.NewDefaultServer(schema.NewExecutableSchema(schema.Config{Resolvers: resolvers}))
 
 	srv.AddTransport(transport.Options{})
 	srv.AddTransport(transport.GET{})

@@ -1,0 +1,6 @@
+type Todo {
+  id: Int!
+  text: String!
+  done: Boolean!
+  user: User!
+}
