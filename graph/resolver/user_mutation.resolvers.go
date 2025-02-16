@@ -4,14 +4,14 @@ import (
 	"context"
 
 	"grapql-to-do/graph/model"
-	"grapql-to-do/internal/usecase"
+	"grapql-to-do/graph/resolver/usecase"
 )
 
 type UserMutationResolver struct {
-	userUsecase *usecase.UserUsecase
+	userUsecase usecase.CreateUserUsecase
 }
 
-func NewUserMutationResolver(userUsecase *usecase.UserUsecase) *UserMutationResolver {
+func NewUserMutationResolver(userUsecase usecase.CreateUserUsecase) *UserMutationResolver {
 	return &UserMutationResolver{userUsecase: userUsecase}
 }
 

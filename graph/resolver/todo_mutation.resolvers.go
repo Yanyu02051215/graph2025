@@ -4,14 +4,14 @@ import (
 	"context"
 
 	"grapql-to-do/graph/model"
-	"grapql-to-do/internal/usecase"
+	"grapql-to-do/graph/resolver/usecase"
 )
 
 type TodoMutationResolver struct {
-	todoUsecase *usecase.TodoCreateUsecase
+	todoUsecase usecase.TodoUsecase
 }
 
-func NewTodoMutationResolver(todoUsecase *usecase.TodoCreateUsecase) *TodoMutationResolver {
+func NewTodoMutationResolver(todoUsecase usecase.TodoUsecase) *TodoMutationResolver {
 	return &TodoMutationResolver{todoUsecase: todoUsecase}
 }
 
@@ -19,7 +19,7 @@ func (r *TodoMutationResolver) CreateTodo(ctx context.Context, input model.NewTo
 	todo := &model.Todo{
 		Text: input.Text,
 		User: &model.User{
-			ID:   input.UserID,
+			ID: input.UserID,
 		},
 	}
 
