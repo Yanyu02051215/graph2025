@@ -2,28 +2,29 @@ package resolver
 
 import (
 	"context"
+
 	"grapql-to-do/graph/model"
-	"grapql-to-do/internal"
+	"grapql-to-do/internal/usecase"
 )
 
-// TodoMutationResolver は Todo のミューテーションリゾルバ
-type TodoMutationResolver struct{}
+// UserMutationResolver は User のミューテーションリゾルバ
+type UserMutationResolver struct {
+	userUsecase *usecase.UserUsecase
+}
 
-// CreateTodo は createTodo ミューテーションのリゾルバ
-func (r *TodoMutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	query := `INSERT INTO todos (text, done, user_id) VALUES ($1, $2, $3) RETURNING id`
-	var id int
-	err := internal.DB.QueryRow(ctx, query, input.Text, false, input.UserID).Scan(&id)
+// NewUserMutationResolver は UserMutationResolver を生成する
+func NewUserMutationResolver(userUsecase *usecase.UserUsecase) *UserMutationResolver {
+	return &UserMutationResolver{userUsecase: userUsecase}
+}
+
+func (r *UserMutationResolver) CreateUser(ctx context.Context, input model.CreateUserInput) (*model.User, error) {
+	user := &model.User{Name: input.Name}
+
+	user2, err := r.userUsecase.CreateUser(ctx, user)
 	if err != nil {
 		return nil, err
 	}
 
-	return &model.Todo{
-		ID:   int32(id),
-		Text: input.Text,
-		Done: false,
-		User: &model.User{
-			ID: input.UserID,
-		},
-	}, nil
+	user.ID = user2.ID
+	return user, nil
 }

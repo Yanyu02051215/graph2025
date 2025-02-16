@@ -6,8 +6,8 @@ import (
 	"os"
 
 	"grapql-to-do/graph/resolver/container"
-	"grapql-to-do/internal"
 	"grapql-to-do/graph/schema"
+	"grapql-to-do/internal/infrastructure/database"
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/handler/extension"
@@ -25,8 +25,12 @@ func main() {
 		port = defaultPort
 	}
 
-	internal.ConnectDB()
-	resolvers := container.NewResolver()
+	db, err := database.NewDatabase()
+	if err != nil {
+		log.Fatalf("Failed to connect to database: %v", err)
+	}
+
+	resolvers := container.NewResolver(db)
 	// srv := handler.NewDefaultServer(internal.NewExecutableSchema(internal.Config{Resolvers: &graph.Resolver{}}))
 	srv := handler.NewDefaultServer(schema.NewExecutableSchema(schema.Config{Resolvers: resolvers}))
 

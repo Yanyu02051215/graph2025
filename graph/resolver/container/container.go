@@ -3,6 +3,8 @@ package container
 import (
 	"grapql-to-do/graph/resolver"
 	"grapql-to-do/graph/schema"
+	"grapql-to-do/internal/infrastructure/database"
+	"grapql-to-do/internal/usecase"
 )
 
 // Resolver は全リゾルバを統合する
@@ -12,20 +14,22 @@ type Resolver struct {
 	*resolver.TodoQueryResolver
 }
 
-func NewResolver() *Resolver {
+func NewResolver(db *database.Database) *Resolver {
+	userDAO := database.NewUserDAO(db)
+	userUsecase := usecase.NewUserUsecase(userDAO)
+	userMutationResolver := resolver.NewUserMutationResolver(userUsecase)
+
 	return &Resolver{
-		UserMutationResolver: &resolver.UserMutationResolver{},
+		UserMutationResolver: userMutationResolver,
 		TodoMutationResolver: &resolver.TodoMutationResolver{},
 		TodoQueryResolver:    &resolver.TodoQueryResolver{},
 	}
 }
 
-// Mutation を実装（schema.ResolverRoot を満たす）
 func (r *Resolver) Mutation() schema.MutationResolver {
 	return r
 }
 
-// Query を実装（schema.ResolverRoot を満たす）
 func (r *Resolver) Query() schema.QueryResolver {
 	return r
 }
