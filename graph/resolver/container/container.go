@@ -19,14 +19,18 @@ func NewResolver(db *database.Database) *Resolver {
 	userUsecase := usecase.NewUserCreateUsecase(userDAO)
 	userMutationResolver := resolver.NewUserMutationResolver(userUsecase)
 
-	todoDAO := database.NewCreateTodoDAO(db)
-	todoUsecase := usecase.NewCreateTodoUsecase(todoDAO)
-	todoMutationResolver := resolver.NewTodoMutationResolver(todoUsecase)
+	createTodoDAO := database.NewCreateTodoDAO(db)
+	createTodoUsecase := usecase.NewCreateTodoUsecase(createTodoDAO)
+	todoMutationResolver := resolver.NewTodoMutationResolver(createTodoUsecase)
+
+	getTodoDAO := database.NewGetTodoDAO(db)
+	getTodoUsecase := usecase.NewGetTodosUsecase(getTodoDAO)
+	todoQueryResolver := resolver.NewTodoQueryResolver(getTodoUsecase)
 
 	return &Resolver{
 		UserMutationResolver: userMutationResolver,
 		TodoMutationResolver: todoMutationResolver,
-		TodoQueryResolver:    &resolver.TodoQueryResolver{},
+		TodoQueryResolver:    todoQueryResolver,
 	}
 }
 

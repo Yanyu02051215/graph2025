@@ -8,10 +8,10 @@ import (
 )
 
 type TodoMutationResolver struct {
-	todoUsecase *usecase.TodoUsecase
+	todoUsecase *usecase.TodoCreateUsecase
 }
 
-func NewTodoMutationResolver(todoUsecase *usecase.TodoUsecase) *TodoMutationResolver {
+func NewTodoMutationResolver(todoUsecase *usecase.TodoCreateUsecase) *TodoMutationResolver {
 	return &TodoMutationResolver{todoUsecase: todoUsecase}
 }
 
@@ -32,6 +32,6 @@ func (r *TodoMutationResolver) CreateTodo(ctx context.Context, input model.NewTo
 		ID:   createdTodo.ID,
 		Text: createdTodo.Text,
 		Done: createdTodo.Done,
-		User: &model.User{ID: createdTodo.UserId},
+		User: &model.User{ID: createdTodo.User.ID},
 	}, nil
 }

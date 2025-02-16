@@ -8,18 +8,20 @@ import (
 	model2 "grapql-to-do/graph/model"
 )
 
-type TodoUsecase struct {
+type TodoCreateUsecase struct {
 	todoRepo repository.TodoRepository
 }
 
-func NewCreateTodoUsecase(todoRepo repository.TodoRepository) *TodoUsecase {
-	return &TodoUsecase{todoRepo: todoRepo}
+func NewCreateTodoUsecase(todoRepo repository.TodoRepository) *TodoCreateUsecase {
+	return &TodoCreateUsecase{todoRepo: todoRepo}
 }
 
-func (u *TodoUsecase) CreateTodo(ctx context.Context, todo *model2.Todo) (*model.Todo, error) {
+func (u *TodoCreateUsecase) CreateTodo(ctx context.Context, todo *model2.Todo) (*model.Todo, error) {
 	modelTodo := &model.Todo{
 		Text:   todo.Text,
-		UserId: todo.User.ID,
+		User: &model.User{
+			ID:   todo.User.ID,
+		},
 	}
 	todo2, err := u.todoRepo.Create(ctx, modelTodo)
 	if err != nil {
