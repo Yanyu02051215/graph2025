@@ -15,13 +15,17 @@ type Resolver struct {
 }
 
 func NewResolver(db *database.Database) *Resolver {
-	userDAO := database.NewUserDAO(db)
-	userUsecase := usecase.NewUserUsecase(userDAO)
+	userDAO := database.NewUserCreateDAO(db)
+	userUsecase := usecase.NewUserCreateUsecase(userDAO)
 	userMutationResolver := resolver.NewUserMutationResolver(userUsecase)
+
+	todoDAO := database.NewCreateTodoDAO(db)
+	todoUsecase := usecase.NewCreateTodoUsecase(todoDAO)
+	todoMutationResolver := resolver.NewTodoMutationResolver(todoUsecase)
 
 	return &Resolver{
 		UserMutationResolver: userMutationResolver,
-		TodoMutationResolver: &resolver.TodoMutationResolver{},
+		TodoMutationResolver: todoMutationResolver,
 		TodoQueryResolver:    &resolver.TodoQueryResolver{},
 	}
 }

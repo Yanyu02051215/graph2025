@@ -7,12 +7,10 @@ import (
 	"grapql-to-do/internal/usecase"
 )
 
-// UserMutationResolver は User のミューテーションリゾルバ
 type UserMutationResolver struct {
 	userUsecase *usecase.UserUsecase
 }
 
-// NewUserMutationResolver は UserMutationResolver を生成する
 func NewUserMutationResolver(userUsecase *usecase.UserUsecase) *UserMutationResolver {
 	return &UserMutationResolver{userUsecase: userUsecase}
 }

@@ -2,26 +2,36 @@ package resolver
 
 import (
 	"context"
+
 	"grapql-to-do/graph/model"
-	"grapql-to-do/internal"
+	"grapql-to-do/internal/usecase"
 )
 
-type TodoMutationResolver struct{}
+type TodoMutationResolver struct {
+	todoUsecase *usecase.TodoUsecase
+}
+
+func NewTodoMutationResolver(todoUsecase *usecase.TodoUsecase) *TodoMutationResolver {
+	return &TodoMutationResolver{todoUsecase: todoUsecase}
+}
 
 func (r *TodoMutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	query := `INSERT INTO todos (text, done, user_id) VALUES ($1, $2, $3) RETURNING id`
-	var id int
-	err := internal.DB.QueryRow(ctx, query, input.Text, false, input.UserID).Scan(&id)
+	todo := &model.Todo{
+		Text: input.Text,
+		User: &model.User{
+			ID:   input.UserID,
+		},
+	}
+
+	createdTodo, err := r.todoUsecase.CreateTodo(ctx, todo)
 	if err != nil {
 		return nil, err
 	}
 
 	return &model.Todo{
-		ID:   int32(id),
-		Text: input.Text,
-		Done: false,
-		User: &model.User{
-			ID: input.UserID,
-		},
+		ID:   createdTodo.ID,
+		Text: createdTodo.Text,
+		Done: createdTodo.Done,
+		User: &model.User{ID: createdTodo.UserId},
 	}, nil
 }

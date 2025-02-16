@@ -6,10 +6,8 @@ import (
 	"grapql-to-do/internal"
 )
 
-// TodoQueryResolver は Todo に関するクエリを処理するリゾルバ
 type TodoQueryResolver struct{}
 
-// GetAllTodos はすべての Todo を取得する
 func (r *TodoQueryResolver) GetAllTodos(ctx context.Context) ([]*model.Todo, error) {
 	query := `SELECT
 				todos.id,

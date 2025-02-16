@@ -9,7 +9,7 @@ type UserDAO struct {
 	DB *Database
 }
 
-func NewUserDAO(db *Database) *UserDAO {
+func NewUserCreateDAO(db *Database) *UserDAO {
 	return &UserDAO{DB: db}
 }
 
