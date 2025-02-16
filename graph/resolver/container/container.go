@@ -4,6 +4,7 @@ import (
 	"grapql-to-do/graph/resolver"
 	"grapql-to-do/graph/schema"
 	"grapql-to-do/internal/infrastructure/database"
+	"grapql-to-do/internal/infrastructure"
 	"grapql-to-do/internal/usecase"
 )
 
@@ -14,7 +15,7 @@ type Resolver struct {
 	*resolver.TodoQueryResolver
 }
 
-func NewResolver(db *database.Database) *Resolver {
+func NewResolver(db *infrastructure.Database) *Resolver {
 	userDAO := database.NewUserCreateDAO(db)
 	userUsecase := usecase.NewUserCreateUsecase(userDAO)
 	userMutationResolver := resolver.NewUserMutationResolver(userUsecase)

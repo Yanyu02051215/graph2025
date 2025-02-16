@@ -3,13 +3,14 @@ package database
 import (
 	"context"
 	"grapql-to-do/internal/domain/model"
+	"grapql-to-do/internal/infrastructure"
 )
 
 type UserDAO struct {
-	DB *Database
+	DB *infrastructure.Database
 }
 
-func NewUserCreateDAO(db *Database) *UserDAO {
+func NewUserCreateDAO(db *infrastructure.Database) *UserDAO {
 	return &UserDAO{DB: db}
 }
 

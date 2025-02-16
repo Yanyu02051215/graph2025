@@ -3,13 +3,14 @@ package database
 import (
 	"context"
 	"grapql-to-do/internal/domain/model"
+	"grapql-to-do/internal/infrastructure"
 )
 
 type CreateTodoDAO struct {
-	DB *Database
+	DB *infrastructure.Database
 }
 
-func NewCreateTodoDAO(db *Database) *CreateTodoDAO {
+func NewCreateTodoDAO(db *infrastructure.Database) *CreateTodoDAO {
 	return &CreateTodoDAO{DB: db}
 }
 
