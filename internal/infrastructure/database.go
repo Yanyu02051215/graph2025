@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -14,12 +16,13 @@ type Database struct {
 }
 
 func NewDatabase() (*Database, error) {
+	port, _ := strconv.Atoi(os.Getenv("DB_PORT"))
 	databaseURL := fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
-		"postgresql",
-		"postgresql",
-		"localhost",
-		5434,
-		"api",
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		port,
+		os.Getenv("DB_NAME"),
 	)
 
 	pool, err := pgxpool.New(context.Background(), databaseURL)

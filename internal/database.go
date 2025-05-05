@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
+	"strconv"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -12,13 +14,14 @@ import (
 var DB *pgxpool.Pool
 
 func ConnectDB() {
+	port, _ := strconv.Atoi(os.Getenv("DB_PORT"))
 	// Docker Compose の設定に合わせた接続 URL
 	databaseURL := fmt.Sprintf("postgres://%s:%s@%s:%d/%s",
-		"postgresql",  // ユーザー名 (POSTGRES_USER)
-		"postgresql",  // パスワード (POSTGRES_PASSWORD)
-		"localhost",          // ホスト名 (サービス名)
-		5434,          // ポート番号 (Docker内部のデフォルト)
-		"api",         // データベース名 (POSTGRES_DB)
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		port,
+		os.Getenv("DB_NAME"),
 	)
 
 	var err error

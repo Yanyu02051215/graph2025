@@ -17,6 +17,23 @@ services:
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gqlgen-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: api
+      DB_USER: postgresql
+      DB_PASSWORD: postgresql
+    restart: always
+
 volumes:
   postgres-data:
     driver: local
