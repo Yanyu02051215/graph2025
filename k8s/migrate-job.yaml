@@ -1,0 +1,25 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migrate-job
+  namespace: dev
+spec:
+  template:
+    spec:
+      containers:
+        - name: migrate
+          image: gqlgen-api:latest
+          imagePullPolicy: Never
+          command: ["./migrate-tool"]  # ← ここはあなたのバイナリ名に合わせて修正
+          env:
+            - name: DB_HOST
+              value: "postgres"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_NAME
+              value: "api"
+            - name: DB_USER
+              value: "postgresql"
+            - name: DB_PASSWORD
+              value: "postgresql"
+      restartPolicy: Never
